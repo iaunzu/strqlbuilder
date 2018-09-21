@@ -385,6 +385,7 @@ public class StrQLBuilder
 	 * Appends a <tt>GROUP BY</tt> clause.
 	 * 
 	 * @param groupBy
+	 *            a {@code String} with the group clause.
 	 * @return a reference to this object.
 	 */
 	public StrQLBuilder groupBy(String groupBy)
@@ -655,9 +656,9 @@ public class StrQLBuilder
 	 * @param entityManager
 	 *            the {@link javax.persistence.EntityManager} that will manage transaction.
 	 * @param clazz
-	 *            Map<Integer, Object> positionParametersMap = new HashMap<Integer, Object>();
+	 *            Map&lt;Integer, Object&gt; positionParametersMap = new HashMapMap&lt;Integer, Object&gt;();
 	 *            ParameterTranslations parameterTranslations = translator.getParameterTranslations();
-	 *            for (Entry<String, Object> parameter : parametersMap.entrySet()) {
+	 *            for (Entry&lt;Integer, Object&gt; parameter : parametersMap.entrySet()) {
 	 *            String name = parameter.getKey();
 	 *            for (int position : parameterTranslations.getNamedParameterSqlLocations(name)) {
 	 *            positionParametersMap.put(position + 1, parameter.getValue());
