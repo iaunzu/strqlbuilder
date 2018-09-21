@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.hibernate.Query;
 import org.hibernate.jpa.internal.QueryImpl;
 import org.hibernate.jpa.spi.AbstractEntityManagerImpl;
 import org.slf4j.Logger;
@@ -21,7 +20,6 @@ import com.github.iaunzu.strqlbuilder.hibernate.propertyeditor.BeanPropertyEdito
 import com.github.iaunzu.strqlbuilder.utils.pojo.DefaultPojoFactory;
 import com.github.iaunzu.strqlbuilder.utils.pojo.IPojoFactory;
 
-@SuppressWarnings("unchecked")
 public class TypedQueryImpl<X> extends QueryImpl<X> {
 
     private static final Logger log = LoggerFactory.getLogger(TypedQueryImpl.class);
@@ -30,7 +28,7 @@ public class TypedQueryImpl<X> extends QueryImpl<X> {
     private Class<X> targetClass;
     private IPojoFactory<X> pojoFactory;
 
-    public TypedQueryImpl(Query query, AbstractEntityManagerImpl em) {
+    public TypedQueryImpl(org.hibernate.Query query, AbstractEntityManagerImpl em) {
 	super(query, em);
     }
 

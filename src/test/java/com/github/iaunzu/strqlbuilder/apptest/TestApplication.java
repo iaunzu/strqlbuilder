@@ -3,17 +3,15 @@ package com.github.iaunzu.strqlbuilder.apptest;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = TestApplication.class)
-@ComponentScan
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = TestApplication.class)
+@DataJpaTest
 @EnableAutoConfiguration
-@Transactional
 @ActiveProfiles("h2")
 @Ignore
 public class TestApplication {

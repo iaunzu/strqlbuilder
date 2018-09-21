@@ -655,6 +655,14 @@ public class StrQLBuilder
 	 * @param entityManager
 	 *            the {@link javax.persistence.EntityManager} that will manage transaction.
 	 * @param clazz
+	 *            Map<Integer, Object> positionParametersMap = new HashMap<Integer, Object>();
+	 *            ParameterTranslations parameterTranslations = translator.getParameterTranslations();
+	 *            for (Entry<String, Object> parameter : parametersMap.entrySet()) {
+	 *            String name = parameter.getKey();
+	 *            for (int position : parameterTranslations.getNamedParameterSqlLocations(name)) {
+	 *            positionParametersMap.put(position + 1, parameter.getValue());
+	 *            // Note that the +1 on the position is needed because of a mismatch between 0-based and 1-based indexing of both APIs.
+	 *            }
 	 *            the class of the resulting instance(s).
 	 * @param pageable
 	 *            an object with pagination info.
@@ -663,7 +671,7 @@ public class StrQLBuilder
 	public <X> PagedTypedQuery<X> createPagedQuery(EntityManager entityManager, Class<X> clazz, Pageable pageable)
 	{
 		TypedQuery<X> pageQuery = createQuery(entityManager, clazz, false);
-		pageQuery.setFirstResult(pageable.getOffset());
+		pageQuery.setFirstResult((int)pageable.getOffset());
 		pageQuery.setMaxResults(pageable.getPageSize());
 		TypedQuery<Long> countQuery = createQuery(entityManager, Long.class, true);
 		return new PagedTypedQueryImpl<X>(pageQuery, pageable, countQuery);
