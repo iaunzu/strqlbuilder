@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.query.ParameterMetadata;
-import org.hibernate.query.internal.QueryImpl;
+import org.hibernate.query.internal.NativeQueryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -21,9 +21,9 @@ import com.github.iaunzu.strqlbuilder.hibernate.propertyeditor.BeanPropertyEdito
 import com.github.iaunzu.strqlbuilder.utils.pojo.DefaultPojoFactory;
 import com.github.iaunzu.strqlbuilder.utils.pojo.IPojoFactory;
 
-public class TypedQueryImpl<X> extends QueryImpl<X> implements StrTypedQuery<X> {
+public class TypedNativeQueryImpl<X> extends NativeQueryImpl<X> implements StrTypedQuery<X> {
 
-    private static final Logger log = LoggerFactory.getLogger(TypedQueryImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(TypedNativeQueryImpl.class);
 
     private Aliases aliases;
 
@@ -31,10 +31,10 @@ public class TypedQueryImpl<X> extends QueryImpl<X> implements StrTypedQuery<X> 
 
     private IPojoFactory<X> pojoFactory;
 
-    public TypedQueryImpl(SharedSessionContractImplementor producer,
-	    ParameterMetadata parameterMetadata,
-	    String queryString) {
-	super(producer, parameterMetadata, queryString);
+    public TypedNativeQueryImpl(String sqlString,
+	    SharedSessionContractImplementor session,
+	    ParameterMetadata sqlParameterMetadata) {
+	super(sqlString, false, session, sqlParameterMetadata);
     }
 
     public X getSingleResult() {

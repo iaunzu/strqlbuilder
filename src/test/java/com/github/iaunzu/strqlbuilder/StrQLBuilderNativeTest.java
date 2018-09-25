@@ -24,7 +24,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import com.github.iaunzu.strqlbuilder.StrQLBuilder;
 import com.github.iaunzu.strqlbuilder.apptest.TestApplication;
 import com.github.iaunzu.strqlbuilder.apptest.domain.Person;
 import com.github.iaunzu.strqlbuilder.apptest.dto.Enabled;
@@ -257,7 +256,7 @@ public class StrQLBuilderNativeTest extends TestApplication {
 	StrQLBuilder sql = StrQLBuilder.createNative()
 		.select("p.name")
 		.from("Person p");
-	Pageable pageable = new PageRequest(0, 10);
+	Pageable pageable = PageRequest.of(0, 10);
 	PagedTypedQuery<String> query = sql.createPagedQuery(entityManager, String.class, pageable);
 	Page<String> persons = query.getResultList();
 	assertThat(persons, is(not(nullValue())));
@@ -271,7 +270,7 @@ public class StrQLBuilderNativeTest extends TestApplication {
 	StrQLBuilder sql = StrQLBuilder.createNative()
 		.select("p.surname")
 		.from("Person p");
-	Pageable pageable = new PageRequest(0, 1);
+	Pageable pageable = PageRequest.of(0, 1);
 	PagedTypedQuery<String> query = sql.createPagedQuery(entityManager, String.class, pageable);
 	Page<String> persons = query.getResultList();
 	assertThat(persons, is(not(nullValue())));
@@ -287,7 +286,7 @@ public class StrQLBuilderNativeTest extends TestApplication {
 	StrQLBuilder sql = StrQLBuilder.createNative()
 		.select("p.age")
 		.from("Person p");
-	Pageable pageable = new PageRequest(1, 1);
+	Pageable pageable = PageRequest.of(1, 1);
 	PagedTypedQuery<Long> query = sql.createPagedQuery(entityManager, Long.class, pageable);
 	Page<Long> ages = query.getResultList();
 	assertThat(ages, is(not(nullValue())));
@@ -303,7 +302,7 @@ public class StrQLBuilderNativeTest extends TestApplication {
 		.select("p.surname")
 		.from("Person p")
 		.order(by("id_person"));
-	Pageable pageable = new PageRequest(1, 1);
+	Pageable pageable = PageRequest.of(1, 1);
 	PagedTypedQuery<PersonDTO> query = sql.createPagedQuery(entityManager, PersonDTO.class, pageable);
 	Page<PersonDTO> persons = query.getResultList();
 	assertThat(persons, is(not(nullValue())));
