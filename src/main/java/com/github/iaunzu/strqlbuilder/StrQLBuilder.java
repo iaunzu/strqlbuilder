@@ -719,7 +719,7 @@ public class StrQLBuilder {
 	ParameterTranslations parameterTranslations = translator.getParameterTranslations();
 	for (Entry<String, Object> parameter : parametersMap.entrySet()) {
 	    String name = parameter.getKey();
-	    for (int position : parameterTranslations.getNamedParameterSqlLocations(name)) {
+	    for (int position : parameterTranslations.getNamedParameterInformation(name).getSourceLocations()) {
 		positionParametersMap.put(position + 1, parameter.getValue());
 		// Note that the +1 on the position is needed because of a
 		// mismatch between 0-based and 1-based indexing of both APIs.

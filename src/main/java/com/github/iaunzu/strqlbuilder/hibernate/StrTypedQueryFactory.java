@@ -21,7 +21,7 @@ public class StrTypedQueryFactory {
 
     private static <X> StrTypedQuery<X> createNative(SharedSessionContractImplementor session, String sqlString) {
 	QueryPlanCache queryPlanCache = session.getFactory().getQueryPlanCache();
-	ParameterMetadata sqlParameterMetadata = queryPlanCache.getSQLParameterMetadata(sqlString);
+	ParameterMetadata sqlParameterMetadata = queryPlanCache.getSQLParameterMetadata(sqlString, false);
 	return new TypedNativeQueryImpl<X>(sqlString, session, sqlParameterMetadata);
     }
 

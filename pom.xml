@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.iaunzu</groupId>
 	<artifactId>strqlbuilder</artifactId>
-	<version>1.3.0</version>
+	<version>1.4.0</version>
 	<packaging>jar</packaging>
 	
 	<name>StrQL Builder</name>
@@ -50,7 +50,7 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>5.2.0.Final</version>
+			<version>5.3.6.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
