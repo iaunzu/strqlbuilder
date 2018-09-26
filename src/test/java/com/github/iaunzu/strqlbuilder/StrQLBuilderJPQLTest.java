@@ -204,7 +204,7 @@ public class StrQLBuilderJPQLTest extends TestApplication {
 	StrQLBuilder jpa = StrQLBuilder.createJPQL()
 		.select("p.name")
 		.from("Person p");
-	Pageable pageable = new PageRequest(0, 10);
+	Pageable pageable = PageRequest.of(0, 10);
 	PagedTypedQuery<String> query = jpa.createPagedQuery(entityManager, String.class, pageable);
 	Page<String> persons = query.getResultList();
 	assertThat(persons, is(not(nullValue())));
@@ -218,7 +218,7 @@ public class StrQLBuilderJPQLTest extends TestApplication {
 	StrQLBuilder jpa = StrQLBuilder.createJPQL()
 		.select("p.surname")
 		.from("Person p");
-	Pageable pageable = new PageRequest(0, 1);
+	Pageable pageable = PageRequest.of(0, 1);
 	PagedTypedQuery<String> query = jpa.createPagedQuery(entityManager, String.class, pageable);
 	Page<String> persons = query.getResultList();
 	assertThat(persons, is(not(nullValue())));
@@ -234,7 +234,7 @@ public class StrQLBuilderJPQLTest extends TestApplication {
 	StrQLBuilder jpa = StrQLBuilder.createJPQL()
 		.select("p.age")
 		.from("Person p");
-	Pageable pageable = new PageRequest(1, 1);
+	Pageable pageable = PageRequest.of(1, 1);
 	PagedTypedQuery<Long> query = jpa.createPagedQuery(entityManager, Long.class, pageable);
 	Page<Long> ages = query.getResultList();
 	assertThat(ages, is(not(nullValue())));
@@ -250,7 +250,7 @@ public class StrQLBuilderJPQLTest extends TestApplication {
 		.select("p.surname")
 		.from("Person p")
 		.order(by("id_person")); // Hibernate No se checkea si existe la propiedad
-	Pageable pageable = new PageRequest(1, 1);
+	Pageable pageable = PageRequest.of(1, 1);
 	PagedTypedQuery<PersonDTO> query = jpa.createPagedQuery(entityManager, PersonDTO.class, pageable);
 	Page<PersonDTO> persons = query.getResultList();
 	assertThat(persons, is(not(nullValue())));
