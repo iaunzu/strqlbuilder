@@ -59,7 +59,7 @@ public class Join extends Chunk
 		}
 
 		/**
-		 * Returns the original {@link StrQLBuilder}, ignoring the <tt>ON</tt> clause.
+		 * Returns the original {@link StrQLBuilder}, ignoring the <code>ON</code> clause.
 		 * 
 		 * @return the original instance of {@link StrQLBuilder}.
 		 */
@@ -70,10 +70,10 @@ public class Join extends Chunk
 		}
 
 		/**
-		 * Appends the condition to the <tt>JOIN</tt> clause using the <tt>ON</tt> operator. Returns the original {@code StrQLBuilder}.
+		 * Appends the condition to the <code>JOIN</code> clause using the <code>ON</code> operator. Returns the original {@code StrQLBuilder}.
 		 *
 		 * @param str
-		 *            a {@code String} with the condition of the <tt>JOIN</tt> clause.
+		 *            a {@code String} with the condition of the <code>JOIN</code> clause.
 		 * @return the original instance of {@link StrQLBuilder}.
 		 */
 		public StrQLBuilder on(String str)
@@ -82,11 +82,11 @@ public class Join extends Chunk
 		}
 
 		/**
-		 * Appends the condition to the <tt>JOIN</tt> clause using the <tt>ON</tt> operator, and the parameters associated to them. Returns the original
+		 * Appends the condition to the <code>JOIN</code> clause using the <code>ON</code> operator, and the parameters associated to them. Returns the original
 		 * {@code StrQLBuilder}.
 		 *
 		 * @param str
-		 *            a {@code String} with the condition of the <tt>JOIN</tt> clause.
+		 *            a {@code String} with the condition of the <code>JOIN</code> clause.
 		 * @param values
 		 *            parameter values of the condition
 		 * @return the original instance of {@link StrQLBuilder}.
@@ -104,7 +104,7 @@ public class Join extends Chunk
 		}
 
 		/**
-		 * Returns the original {@link StrQLBuilder}, ignoring the <tt>WITH</tt> clause.
+		 * Returns the original {@link StrQLBuilder}, ignoring the <code>WITH</code> clause.
 		 * 
 		 * @return the original instance of {@link StrQLBuilder}.
 		 */
@@ -115,10 +115,10 @@ public class Join extends Chunk
 		}
 
 		/**
-		 * Appends the condition to the <tt>JOIN</tt> clause using the <tt>WITH</tt> operator. Returns the original {@code StrQLBuilder}.
+		 * Appends the condition to the <code>JOIN</code> clause using the <code>WITH</code> operator. Returns the original {@code StrQLBuilder}.
 		 *
 		 * @param str
-		 *            a {@code String} with the condition of the <tt>JOIN</tt> clause.
+		 *            a {@code String} with the condition of the <code>JOIN</code> clause.
 		 * @return the original instance of {@link StrQLBuilder}.
 		 */
 		public StrQLBuilder with(String str)
@@ -127,11 +127,11 @@ public class Join extends Chunk
 		}
 
 		/**
-		 * Appends the condition to the <tt>JOIN</tt> clause using the <tt>WITH</tt> operator, and the parameters associated to them. Returns the original
+		 * Appends the condition to the <code>JOIN</code> clause using the <code>WITH</code> operator, and the parameters associated to them. Returns the original
 		 * {@code StrQLBuilder}.
 		 *
 		 * @param str
-		 *            a {@code String} with the condition of the <tt>JOIN</tt> clause.
+		 *            a {@code String} with the condition of the <code>JOIN</code> clause.
 		 * @param values
 		 *            parameter values of the condition
 		 * @return the original instance of {@link StrQLBuilder}.
