@@ -3,6 +3,7 @@ package com.github.iaunzu.strqlbuilder.hibernate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -55,12 +56,20 @@ public class TypedQueryImpl<X> implements StrTypedQuery<X> {
 	private Aliases aliases;
 	private Class<X> targetClass;
 	private IPojoFactory<X> pojoFactory;
+	private Map<Class<?>, IPropertyEditor> customPropertyEditors;
 
 	public TypedQueryImpl(String queryString, HqlInterpretation<Object> hqlInterpretation,
 		SharedSessionContractImplementor session, Class<X> targetClass) {
 		this.delegate = new QuerySqmImpl<Object>(queryString, hqlInterpretation, Object.class, session);
 		this.hqlInterpretation = hqlInterpretation;
 		this.targetClass = targetClass;
+		this.customPropertyEditors = new HashMap<>();
+	}
+
+	public void addCustomPropertyEditor(Class<?> clazz, IPropertyEditor propertyEditor) {
+		if (clazz != null && propertyEditor != null) {
+			customPropertyEditors.put(clazz, propertyEditor);
+		}
 	}
 
 	@Override
@@ -191,6 +200,7 @@ public class TypedQueryImpl<X> implements StrTypedQuery<X> {
 		return null;
 	}
 
+	@Override
 	public void setParameters(Map<String, Object> parameters) {
 		if (parameters == null) {
 			return;
@@ -200,6 +210,12 @@ public class TypedQueryImpl<X> implements StrTypedQuery<X> {
 		}
 	}
 
+	@Override
+	public void setTargetClass(Class<X> targetClass) {
+		this.targetClass = targetClass;
+	}
+
+	@Override
 	public void setPositionParameters(Map<Integer, Object> parameters) {
 		if (parameters == null) {
 			return;
@@ -216,8 +232,15 @@ public class TypedQueryImpl<X> implements StrTypedQuery<X> {
 
 	private void prepareBeanWrapper(IBeanWrapper bean) {
 		Map<Class<?>, IPropertyEditor> defaultPropertyEditors = BeanPropertyEditors.getBeanPropertyEditors();
-		for (Entry<Class<?>, IPropertyEditor> entry : defaultPropertyEditors.entrySet()) {
-			bean.addPropertyEditor(entry.getKey(), entry.getValue());
+		addPropertyEditors(bean, defaultPropertyEditors);
+		addPropertyEditors(bean, customPropertyEditors);
+	}
+
+	private void addPropertyEditors(IBeanWrapper bean, Map<Class<?>, IPropertyEditor> propertyEditors) {
+		if (propertyEditors != null) {
+			for (Entry<Class<?>, IPropertyEditor> entry : propertyEditors.entrySet()) {
+				bean.addPropertyEditor(entry.getKey(), entry.getValue());
+			}
 		}
 	}
 
@@ -228,6 +251,7 @@ public class TypedQueryImpl<X> implements StrTypedQuery<X> {
 		return pojoFactory;
 	}
 
+	@Override
 	public void setPojoFactory(IPojoFactory<X> pojoFactory) {
 		this.pojoFactory = pojoFactory;
 	}

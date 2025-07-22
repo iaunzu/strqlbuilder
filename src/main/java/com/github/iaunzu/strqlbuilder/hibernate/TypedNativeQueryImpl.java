@@ -1,6 +1,7 @@
 package com.github.iaunzu.strqlbuilder.hibernate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -29,19 +30,30 @@ public class TypedNativeQueryImpl<X> extends NativeQueryImpl<X> implements StrTy
 	private Class<X> targetClass;
 
 	private IPojoFactory<X> pojoFactory;
+	private Map<Class<?>, IPropertyEditor> customPropertyEditors;
 
 	public TypedNativeQueryImpl(String sqlString,
 		SharedSessionContractImplementor session, Class<X> targetClass) {
 		super(sqlString, session);
 		this.sqlString = sqlString;
 		this.targetClass = targetClass;
+		this.customPropertyEditors = new HashMap<>();
 	}
 
+	@Override
+	public void addCustomPropertyEditor(Class<?> clazz, IPropertyEditor propertyEditor) {
+		if (clazz != null && propertyEditor != null) {
+			customPropertyEditors.put(clazz, propertyEditor);
+		}
+	}
+
+	@Override
 	public X getSingleResult() {
 		X rs = uniqueResult();
 		return parseResultSet(rs);
 	}
 
+	@Override
 	public List<X> getResultList() {
 		List<X> list = new ArrayList<X>();
 		for (Object res : this.list()) {
@@ -90,6 +102,7 @@ public class TypedNativeQueryImpl<X> extends NativeQueryImpl<X> implements StrTy
 		return null;
 	}
 
+	@Override
 	public void setParameters(Map<String, Object> parameters) {
 		if (parameters == null) {
 			return;
@@ -115,8 +128,15 @@ public class TypedNativeQueryImpl<X> extends NativeQueryImpl<X> implements StrTy
 
 	private void prepareBeanWrapper(IBeanWrapper bean) {
 		Map<Class<?>, IPropertyEditor> defaultPropertyEditors = BeanPropertyEditors.getBeanPropertyEditors();
-		for (Entry<Class<?>, IPropertyEditor> entry : defaultPropertyEditors.entrySet()) {
-			bean.addPropertyEditor(entry.getKey(), entry.getValue());
+		addPropertyEditors(bean, defaultPropertyEditors);
+		addPropertyEditors(bean, customPropertyEditors);
+	}
+
+	private void addPropertyEditors(IBeanWrapper bean, Map<Class<?>, IPropertyEditor> propertyEditors) {
+		if (propertyEditors != null) {
+			for (Entry<Class<?>, IPropertyEditor> entry : propertyEditors.entrySet()) {
+				bean.addPropertyEditor(entry.getKey(), entry.getValue());
+			}
 		}
 	}
 
@@ -127,6 +147,12 @@ public class TypedNativeQueryImpl<X> extends NativeQueryImpl<X> implements StrTy
 		return pojoFactory;
 	}
 
+	@Override
+	public void setTargetClass(Class<X> targetClass) {
+		this.targetClass = targetClass;
+	}
+
+	@Override
 	public void setPojoFactory(IPojoFactory<X> pojoFactory) {
 		this.pojoFactory = pojoFactory;
 	}
