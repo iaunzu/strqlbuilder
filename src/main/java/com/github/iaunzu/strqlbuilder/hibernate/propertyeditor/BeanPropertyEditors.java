@@ -27,6 +27,6 @@ public class BeanPropertyEditors {
     }
 
     public static Map<Class<?>, IPropertyEditor> getBeanPropertyEditors() {
-	return map;
+	return new HashMap<Class<?>, IPropertyEditor>(map);
     }
 }

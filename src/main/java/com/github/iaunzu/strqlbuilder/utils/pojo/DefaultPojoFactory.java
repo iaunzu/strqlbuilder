@@ -1,6 +1,7 @@
 package com.github.iaunzu.strqlbuilder.utils.pojo;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.lang3.ClassUtils;
 import org.slf4j.Logger;
@@ -27,10 +28,9 @@ public class DefaultPojoFactory<T> implements IPojoFactory<T> {
     @Override
     public T newInstance() {
 	try {
-	    return this.clazz.newInstance();
-	} catch (InstantiationException e) {
-	    log.error("Error instanciando " + clazz, e);
-	} catch (IllegalAccessException e) {
+	    return this.clazz.getDeclaredConstructor().newInstance();
+	} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+	    | NoSuchMethodException | SecurityException e) {
 	    log.error("Error instanciando " + clazz, e);
 	}
 	return null;

@@ -2,8 +2,10 @@ package com.github.iaunzu.strqlbuilder;
 
 import static org.junit.Assert.assertThat;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -22,8 +24,11 @@ import com.github.iaunzu.strqlbuilder.apptest.TestApplication;
 import com.github.iaunzu.strqlbuilder.apptest.domain.Person;
 import com.github.iaunzu.strqlbuilder.apptest.dto.Enabled;
 import com.github.iaunzu.strqlbuilder.apptest.dto.PersonDTO;
+import com.github.iaunzu.strqlbuilder.apptest.dto.PersonJava8DTO;
 import com.github.iaunzu.strqlbuilder.apptest.repositories.PersonRepository;
+import com.github.iaunzu.strqlbuilder.hibernate.StrTypedQuery;
 import com.github.iaunzu.strqlbuilder.pagination.PagedTypedQuery;
+import com.github.iaunzu.strqlbuilder.utils.pojo.DefaultPojoFactory;
 
 import static com.github.iaunzu.strqlbuilder.chunks.OrderBy.by;
 import static com.github.iaunzu.strqlbuilder.chunks.OrderBy.Direction.DESC;
@@ -260,4 +265,58 @@ public class StrQLBuilderJPQLTest extends TestApplication {
 	assertThat(persons.getContent().get(0).getSurname(), is("Labiano"));
     }
 
+    @Test
+    public void customPojoFactoryTest() {
+	StrQLBuilder sql = StrQLBuilder.createNative()
+	    .select("p.birthday")
+	    .from("Person p")
+	    .where("p.birthday is not null");
+
+	StrTypedQuery<LocalDate> query = sql.createQuery(entityManager, LocalDate.class);
+	query.setPojoFactory(new DefaultPojoFactory<LocalDate>(LocalDate.class) {
+	    @Override
+	    public boolean isPrimitive() {
+		return true;
+	    }
+	    @Override
+	    public LocalDate parsePrimitive(Object v) {
+		if (!(v instanceof Date)) {
+		    return null;
+		}
+		Date date = (Date) v;
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		return LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1,
+		cal.get(Calendar.DAY_OF_MONTH));
+	    }
+	});
+	List<LocalDate> values = query.getResultList();
+	assertThat(values, hasSize(1));
+	LocalDate today = LocalDate.now();
+	assertThat(values.get(0), is(today));
+    }
+
+    @Test
+    public void customPropertyEditorTest() {
+	    StrQLBuilder sql = StrQLBuilder.createNative()
+		.select("p.birthday as birthDate")
+		.from("Person p")
+		.where("p.birthday is not null");
+
+	StrTypedQuery<PersonJava8DTO> query = sql.createQuery(entityManager, PersonJava8DTO.class);
+	query.addCustomPropertyEditor(LocalDate.class, (Object v) -> {
+	    if (!(v instanceof Date)) {
+		return null;
+	    }
+	    Date date = (Date) v;
+	    Calendar cal = Calendar.getInstance();
+	    cal.setTime(date);
+	    return LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1,
+		cal.get(Calendar.DAY_OF_MONTH));
+	    });
+	List<PersonJava8DTO> values = query.getResultList();
+	assertThat(values, hasSize(1));
+	LocalDate today = LocalDate.now();
+	assertThat(values.get(0).getBirthDate(), is(today));
+    }
 }
