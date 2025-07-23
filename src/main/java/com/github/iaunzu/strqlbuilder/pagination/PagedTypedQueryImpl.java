@@ -9,6 +9,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import com.github.iaunzu.beanwrapper.propertyeditor.IPropertyEditor;
+import com.github.iaunzu.strqlbuilder.hibernate.StrTypedQuery;
+
 public class PagedTypedQueryImpl<X> implements PagedTypedQuery<X> {
 
     protected TypedQuery<X> query;
@@ -19,6 +22,12 @@ public class PagedTypedQueryImpl<X> implements PagedTypedQuery<X> {
 	this.query = query;
 	this.countQuery = countQuery;
 	this.pageable = pageable;
+    }
+
+    public void addCustomPropertyEditor(Class<?> clazz, IPropertyEditor propertyEditor) {
+	if (query instanceof StrTypedQuery) {
+	    ((StrTypedQuery<X>) query).addCustomPropertyEditor(clazz, propertyEditor);
+	}
     }
 
     public PagedTypedQueryImpl<X> setFirstResult(int startPosition) {
