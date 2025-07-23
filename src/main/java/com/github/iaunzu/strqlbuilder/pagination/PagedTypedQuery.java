@@ -2,12 +2,14 @@ package com.github.iaunzu.strqlbuilder.pagination;
 
 import org.springframework.data.domain.Page;
 
-public interface PagedTypedQuery<T> {
+import com.github.iaunzu.strqlbuilder.hibernate.CustomPropertyEditorRegistrar;
 
-    Page<T> getResultList();
+public interface PagedTypedQuery<T> extends CustomPropertyEditorRegistrar {
 
-    PagedTypedQuery<T> setMaxResult(int maxResult);
+	Page<T> getResultList();
 
-    PagedTypedQuery<T> setFirstResult(int startPosition);
+	PagedTypedQuery<T> setMaxResult(int maxResult);
+
+	PagedTypedQuery<T> setFirstResult(int startPosition);
 
 }
