@@ -12,6 +12,8 @@ import io.github.iaunzu.strqlbuilder.chunks.OrderBy.Direction;
 import io.github.iaunzu.strqlbuilder.chunks.Parameter;
 import io.github.iaunzu.strqlbuilder.chunks.Select;
 import io.github.iaunzu.strqlbuilder.chunks.Where;
+import io.github.iaunzu.strqlbuilder.chunks.With;
+import io.github.iaunzu.strqlbuilder.chunks.With.WithAs;
 import io.github.iaunzu.strqlbuilder.chunks.like.CaseInsensitiveLike;
 import io.github.iaunzu.strqlbuilder.exceptions.ParseSqlException;
 import io.github.iaunzu.strqlbuilder.hibernate.SqmTranslator;
@@ -43,6 +45,8 @@ public class StrQLBuilder {
 
     private StrQLBuilder unionParent;
 
+    private List<With> withs;
+
     private Select select;
 
     private From from;
@@ -70,6 +74,7 @@ public class StrQLBuilder {
         this.unionType = unionType;
         this.isNative = isNative;
 
+        withs = new ArrayList<With>();
         select = new Select();
         from = new From();
         joins = new ArrayList<Join>();
@@ -97,6 +102,18 @@ public class StrQLBuilder {
      */
     public static final StrQLBuilder createJPQL() {
         return new StrQLBuilder(null, UnionType.NO_UNION, false);
+    }
+
+    /**
+     * Creates a new WITH clause with a Common Table Expression (CTE) name.
+     *
+     * @param cteName
+     * @return a {@link WithAs} instance that allows you to specify the CTE
+     */
+    public WithAs with(String cteName) {
+        With with = new With(this);
+        this.withs.add(with);
+        return with.with(cteName);
     }
 
     /**
@@ -754,6 +771,14 @@ public class StrQLBuilder {
     private String build(boolean pagedCount) {
 
         StringBuilder sql = new StringBuilder();
+        for (int i = 0; i < withs.size(); i++) {
+            With with = withs.get(i);
+            if (i == 0) {
+                sql.append(with.buildFirst());
+            } else {
+                sql.append(with.buildSubsequent());
+            }
+        }
         sql.append(select.build());
 
         if (from.isNotEmpty()) {

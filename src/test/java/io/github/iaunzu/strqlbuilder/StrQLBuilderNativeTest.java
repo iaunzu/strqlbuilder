@@ -4,6 +4,7 @@ import static io.github.iaunzu.strqlbuilder.chunks.OrderBy.Direction.DESC;
 import static io.github.iaunzu.strqlbuilder.chunks.OrderBy.by;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -22,6 +23,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -340,11 +342,7 @@ public class StrQLBuilderNativeTest extends TestApplication {
                 if (!(v instanceof Date)) {
                     return null;
                 }
-                Date date = (Date) v;
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(date);
-                return LocalDate.of(
-                        cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
+                return ((Date) v).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             }
         });
         List<LocalDate> values = query.getResultList();
@@ -365,14 +363,42 @@ public class StrQLBuilderNativeTest extends TestApplication {
             if (!(v instanceof Date)) {
                 return null;
             }
-            Date date = (Date) v;
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-            return LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
+            return ((Date) v).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         });
         List<PersonJava8DTO> values = query.getResultList();
         assertThat(values, hasSize(1));
         LocalDate today = LocalDate.now();
         assertThat(values.get(0).getBirthDate(), is(today));
+    }
+
+    @Test
+    public void withTest() {
+        StrQLBuilder sql = StrQLBuilder.createNative()
+                .with("nombres(valor)")
+                .as(StrQLBuilder.createNative().select("p.name").from("Person p"))
+                .with("apellidos(valor)")
+                .as("select p.surname from Person p")
+                .select("n.valor")
+                .from("nombres n")
+                .unionAll()
+                .select("a.valor")
+                .from("apellidos a")
+                .endUnion();
+        TypedQuery<String> query = sql.createQuery(entityManager, String.class);
+        List<String> persons = query.getResultList();
+        assertThat(persons, hasSize(4));
+        assertThat(persons, hasItems("Luis", "Fake Person", "Labiano"));
+    }
+
+    @Test
+    public void selectTest() {
+        StrQLBuilder sql = StrQLBuilder.createNative()
+                .select("p.name AS name, p.surname, p.age AS age FROM Person p WHERE p.id_person = :id", 2L);
+        TypedQuery<PersonDTO> query = sql.createQuery(entityManager, PersonDTO.class);
+        List<PersonDTO> list = query.getResultList();
+        assertThat(list, hasSize(1));
+        assertThat(list.get(0).getName(), is("Luis"));
+        assertThat(list.get(0).getSurname(), is("Labiano"));
+        assertThat(list.get(0).getAge(), is(11));
     }
 }
