@@ -4,6 +4,5 @@ import com.github.iaunzu.beanwrapper.propertyeditor.IPropertyEditor;
 
 public interface CustomPropertyEditorRegistrar {
 
-	void addCustomPropertyEditor(Class<?> clazz, IPropertyEditor propertyEditor);
-
+    void addCustomPropertyEditor(Class<?> clazz, IPropertyEditor propertyEditor);
 }

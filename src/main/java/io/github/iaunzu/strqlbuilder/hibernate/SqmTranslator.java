@@ -1,8 +1,8 @@
 package io.github.iaunzu.strqlbuilder.hibernate;
 
+import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.Map;
-
 import org.hibernate.engine.jdbc.mutation.internal.MutationQueryOptions;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
@@ -27,86 +27,82 @@ import org.hibernate.sql.exec.spi.JdbcOperationQuerySelect;
 import org.hibernate.sql.exec.spi.JdbcParameterBindings;
 import org.hibernate.sql.exec.spi.JdbcParametersList;
 
-import jakarta.persistence.EntityManager;
-
 public class SqmTranslator {
 
-	private SharedSessionContractImplementor session;
-	private SessionFactoryImplementor sessionFactory;
-	private QueryEngine queryEngine;
-	private HqlTranslator hqlTranslator;
+    private SharedSessionContractImplementor session;
+    private SessionFactoryImplementor sessionFactory;
+    private QueryEngine queryEngine;
+    private HqlTranslator hqlTranslator;
 
-	public SqmTranslator(EntityManager entityManager) {
-		this(entityManager.unwrap(SharedSessionContractImplementor.class));
-	}
+    public SqmTranslator(EntityManager entityManager) {
+        this(entityManager.unwrap(SharedSessionContractImplementor.class));
+    }
 
-	public SqmTranslator(SharedSessionContractImplementor session) {
-		this.session = session;
-		this.sessionFactory = session.getFactory();
-		this.queryEngine = sessionFactory.getQueryEngine();
-		this.hqlTranslator = queryEngine.getHqlTranslator();
-	}
+    public SqmTranslator(SharedSessionContractImplementor session) {
+        this.session = session;
+        this.sessionFactory = session.getFactory();
+        this.queryEngine = sessionFactory.getQueryEngine();
+        this.hqlTranslator = queryEngine.getHqlTranslator();
+    }
 
-	public String translateNativeSelect(String queryString) {
-		HqlInterpretation<Object> hqlInterpretation = queryEngine.getInterpretationCache()
-			.resolveHqlInterpretation(
-				queryString,
-				Object.class,
-				hqlTranslator);
-		DomainParameterXref domainParameterXref = hqlInterpretation.getDomainParameterXref();
+    public String translateNativeSelect(String queryString) {
+        HqlInterpretation<Object> hqlInterpretation =
+                queryEngine.getInterpretationCache().resolveHqlInterpretation(queryString, Object.class, hqlTranslator);
+        DomainParameterXref domainParameterXref = hqlInterpretation.getDomainParameterXref();
 
-		if (!(hqlInterpretation.getSqmStatement() instanceof SqmSelectStatement)) {
-			throw new IllegalStateException("Cannot translate non-select statement to SQL");
-		}
-		SqmSelectStatement<Object> sqm = (SqmSelectStatement<Object>) hqlInterpretation.getSqmStatement();
-		ParameterMetadataImplementor parameterMetadata;
-		if (!domainParameterXref.hasParameters()) {
-			parameterMetadata = ParameterMetadataImpl.EMPTY;
-		} else {
-			parameterMetadata = new ParameterMetadataImpl(domainParameterXref.getQueryParameters());
-		}
+        if (!(hqlInterpretation.getSqmStatement() instanceof SqmSelectStatement)) {
+            throw new IllegalStateException("Cannot translate non-select statement to SQL");
+        }
+        SqmSelectStatement<Object> sqm = (SqmSelectStatement<Object>) hqlInterpretation.getSqmStatement();
+        ParameterMetadataImplementor parameterMetadata;
+        if (!domainParameterXref.hasParameters()) {
+            parameterMetadata = ParameterMetadataImpl.EMPTY;
+        } else {
+            parameterMetadata = new ParameterMetadataImpl(domainParameterXref.getQueryParameters());
+        }
 
-		QueryParameterBindingsImpl parameterBindings = QueryParameterBindingsImpl.from(parameterMetadata,
-			sessionFactory);
+        QueryParameterBindingsImpl parameterBindings =
+                QueryParameterBindingsImpl.from(parameterMetadata, sessionFactory);
 
-		final MutationQueryOptions noQueryOptions = new MutationQueryOptions();
-		final SqmTranslation<SelectStatement> sqmInterpretation = sessionFactory.getQueryEngine()
-			.getSqmTranslatorFactory()
-			.createSelectTranslator(
-				sqm,
-				noQueryOptions,
-				domainParameterXref,
-				parameterBindings,
-				session.getLoadQueryInfluencers(),
-				sessionFactory,
-				true)
-			.translate();
+        final MutationQueryOptions noQueryOptions = new MutationQueryOptions();
+        final SqmTranslation<SelectStatement> sqmInterpretation = sessionFactory
+                .getQueryEngine()
+                .getSqmTranslatorFactory()
+                .createSelectTranslator(
+                        sqm,
+                        noQueryOptions,
+                        domainParameterXref,
+                        parameterBindings,
+                        session.getLoadQueryInfluencers(),
+                        sessionFactory,
+                        true)
+                .translate();
 
-		final FromClauseAccess tableGroupAccess = sqmInterpretation.getFromClauseAccess();
-		final Map<QueryParameterImplementor<?>, Map<SqmParameter<?>, List<JdbcParametersList>>> jdbcParamsXref = SqmUtil
-			.generateJdbcParamsXref(domainParameterXref, sqmInterpretation::getJdbcParamsBySqmParam);
-		final JdbcParameterBindings jdbcParameterBindings = SqmUtil.createJdbcParameterBindings(
-			parameterBindings,
-			domainParameterXref,
-			jdbcParamsXref,
-			session.getFactory().getRuntimeMetamodels().getMappingMetamodel(),
-			tableGroupAccess::findTableGroup,
-			new SqmParameterMappingModelResolutionAccess() {
-				@Override
-				@SuppressWarnings("unchecked")
-				public <T> MappingModelExpressible<T> getResolvedMappingModelType(SqmParameter<T> parameter) {
-					return (MappingModelExpressible<T>) sqmInterpretation.getSqmParameterMappingModelTypeResolutions()
-						.get(parameter);
-				}
-			},
-			session);
-		final SqlAstTranslator<JdbcOperationQuerySelect> selectTranslator = session.getJdbcServices()
-			.getJdbcEnvironment().getSqlAstTranslatorFactory()
-			.buildSelectTranslator(sessionFactory, sqmInterpretation.getSqlAst());
-		JdbcOperationQuerySelect translated = selectTranslator.translate(jdbcParameterBindings,
-			noQueryOptions);
+        final FromClauseAccess tableGroupAccess = sqmInterpretation.getFromClauseAccess();
+        final Map<QueryParameterImplementor<?>, Map<SqmParameter<?>, List<JdbcParametersList>>> jdbcParamsXref =
+                SqmUtil.generateJdbcParamsXref(domainParameterXref, sqmInterpretation::getJdbcParamsBySqmParam);
+        final JdbcParameterBindings jdbcParameterBindings = SqmUtil.createJdbcParameterBindings(
+                parameterBindings,
+                domainParameterXref,
+                jdbcParamsXref,
+                session.getFactory().getRuntimeMetamodels().getMappingMetamodel(),
+                tableGroupAccess::findTableGroup,
+                new SqmParameterMappingModelResolutionAccess() {
+                    @Override
+                    @SuppressWarnings("unchecked")
+                    public <T> MappingModelExpressible<T> getResolvedMappingModelType(SqmParameter<T> parameter) {
+                        return (MappingModelExpressible<T>) sqmInterpretation
+                                .getSqmParameterMappingModelTypeResolutions()
+                                .get(parameter);
+                    }
+                },
+                session);
+        final SqlAstTranslator<JdbcOperationQuerySelect> selectTranslator = session.getJdbcServices()
+                .getJdbcEnvironment()
+                .getSqlAstTranslatorFactory()
+                .buildSelectTranslator(sessionFactory, sqmInterpretation.getSqlAst());
+        JdbcOperationQuerySelect translated = selectTranslator.translate(jdbcParameterBindings, noQueryOptions);
 
-		return translated.getSqlString();
-	}
-
+        return translated.getSqlString();
+    }
 }

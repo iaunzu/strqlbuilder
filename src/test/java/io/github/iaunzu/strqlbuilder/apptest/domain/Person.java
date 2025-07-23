@@ -1,8 +1,5 @@
 package io.github.iaunzu.strqlbuilder.apptest.domain;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,106 +7,110 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.util.Calendar;
+import java.util.Date;
 
 @Entity
 @Table(name = "Person")
 public class Person {
 
-	@Id
-	@GeneratedValue
-	@Column(name = "ID_PERSON", unique = true, nullable = false, updatable = false)
-	private Long id;
-	private String name;
-	private String surname;
-	private Integer age;
-	private Float height;
-	private Calendar birthday;
-	private Date creationDate;
-	private Boolean enabled;
-	@Column(nullable = false)
-	private boolean alive;
-	@ManyToOne
-	@JoinColumn(name = "ID_JOB")
-	private Job job;
+    @Id
+    @GeneratedValue
+    @Column(name = "ID_PERSON", unique = true, nullable = false, updatable = false)
+    private Long id;
 
-	public Long getId() {
-		return id;
-	}
+    private String name;
+    private String surname;
+    private Integer age;
+    private Float height;
+    private Calendar birthday;
+    private Date creationDate;
+    private Boolean enabled;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Column(nullable = false)
+    private boolean alive;
 
-	public String getName() {
-		return name;
-	}
+    @ManyToOne
+    @JoinColumn(name = "ID_JOB")
+    private Job job;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getSurname() {
-		return surname;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setSurname(String surname) {
-		this.surname = surname;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public Integer getAge() {
-		return age;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setAge(Integer age) {
-		this.age = age;
-	}
+    public String getSurname() {
+        return surname;
+    }
 
-	public Float getHeight() {
-		return height;
-	}
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
 
-	public void setHeight(Float height) {
-		this.height = height;
-	}
+    public Integer getAge() {
+        return age;
+    }
 
-	public Calendar getBirthday() {
-		return birthday;
-	}
+    public void setAge(Integer age) {
+        this.age = age;
+    }
 
-	public void setBirthday(Calendar birthday) {
-		this.birthday = birthday;
-	}
+    public Float getHeight() {
+        return height;
+    }
 
-	public Date getCreationDate() {
-		return creationDate;
-	}
+    public void setHeight(Float height) {
+        this.height = height;
+    }
 
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
+    public Calendar getBirthday() {
+        return birthday;
+    }
 
-	public Boolean getEnabled() {
-		return enabled;
-	}
+    public void setBirthday(Calendar birthday) {
+        this.birthday = birthday;
+    }
 
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
-	}
+    public Date getCreationDate() {
+        return creationDate;
+    }
 
-	public Boolean getAlive() {
-		return alive;
-	}
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
 
-	public void setAlive(boolean alive) {
-		this.alive = alive;
-	}
+    public Boolean getEnabled() {
+        return enabled;
+    }
 
-	public Job getJob() {
-		return job;
-	}
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
 
-	public void setJob(Job job) {
-		this.job = job;
-	}
+    public Boolean getAlive() {
+        return alive;
+    }
 
+    public void setAlive(boolean alive) {
+        this.alive = alive;
+    }
+
+    public Job getJob() {
+        return job;
+    }
+
+    public void setJob(Job job) {
+        this.job = job;
+    }
 }

@@ -3,11 +3,11 @@ package io.github.iaunzu.strqlbuilder.apptest.dto;
 import com.github.iaunzu.beanwrapper.dto.DatabaseClass;
 
 public enum Enabled implements DatabaseClass<Boolean> {
-    ENABLED, DISABLED;
+    ENABLED,
+    DISABLED;
 
     @Override
     public Boolean getDatabaseValue() {
-	return this == ENABLED;
+        return this == ENABLED;
     }
-
 }

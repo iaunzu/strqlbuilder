@@ -1,163 +1,148 @@
 package io.github.iaunzu.strqlbuilder.chunks;
 
+import io.github.iaunzu.strqlbuilder.StrQLBuilder;
 import org.apache.commons.lang3.StringUtils;
 
-import io.github.iaunzu.strqlbuilder.StrQLBuilder;
+public class Join extends Chunk {
 
-public class Join extends Chunk
-{
+    public Join(StrQLBuilder sql) {
+        super(sql);
+    }
 
-	public Join(StrQLBuilder sql)
-	{
-		super(sql);
-	}
+    private JoinType joinType;
 
-	private JoinType joinType;
+    public JoinOn join(JoinType joinType, String table) {
+        this.joinType = joinType;
+        table = trim(table);
+        return new JoinOn(sql, this, table);
+    }
 
-	public JoinOn join(JoinType joinType, String table)
-	{
-		this.joinType = joinType;
-		table = trim(table);
-		return new JoinOn(sql, this, table);
-	}
+    @Override
+    public String build() {
+        return " " + joinType.getType() + " " + sb.toString();
+    }
 
-	@Override
-	public String build()
-	{
-		return " " + joinType.getType() + " " + sb.toString();
-	}
+    public static enum JoinType {
+        INNER_JOIN("join"),
+        LEFT_JOIN("left join"),
+        RIGHT_JOIN("right join"),
+        JOIN_FETCH("join fetch"),
+        LEFT_JOIN_FETCH("left join fetch"),
+        FULL_JOIN("full join");
+        String type;
 
-	public static enum JoinType
-	{
-		INNER_JOIN("join"), LEFT_JOIN("left join"), RIGHT_JOIN("right join"), JOIN_FETCH("join fetch"), LEFT_JOIN_FETCH("left join fetch"), FULL_JOIN("full join");
-		String type;
+        private JoinType(String type) {
+            this.type = type;
+        }
 
-		private JoinType(String type)
-		{
-			this.type = type;
-		}
+        public String getType() {
+            return type;
+        }
+    }
 
-		public String getType()
-		{
-			return type;
-		}
-	}
+    public class JoinOn {
+        private StrQLBuilder sql;
 
-	public class JoinOn
-	{
-		private StrQLBuilder sql;
+        private Join join;
 
-		private Join join;
+        private StringBuilder tableName;
 
-		private StringBuilder tableName;
+        public JoinOn(StrQLBuilder sql, Join join, String tableName) {
+            this.sql = sql;
+            this.join = join;
+            this.tableName = new StringBuilder(tableName);
+        }
 
-		public JoinOn(StrQLBuilder sql, Join join, String tableName)
-		{
-			this.sql = sql;
-			this.join = join;
-			this.tableName = new StringBuilder(tableName);
-		}
+        /**
+         * Returns the original {@link StrQLBuilder}, ignoring the <code>ON</code> clause.
+         *
+         * @return the original instance of {@link StrQLBuilder}.
+         */
+        public StrQLBuilder on() {
+            join.sb.append(tableName);
+            return sql;
+        }
 
-		/**
-		 * Returns the original {@link StrQLBuilder}, ignoring the <code>ON</code> clause.
-		 * 
-		 * @return the original instance of {@link StrQLBuilder}.
-		 */
-		public StrQLBuilder on()
-		{
-			join.sb.append(tableName);
-			return sql;
-		}
+        /**
+         * Appends the condition to the <code>JOIN</code> clause using the <code>ON</code> operator. Returns the original {@code StrQLBuilder}.
+         *
+         * @param str
+         *            a {@code String} with the condition of the <code>JOIN</code> clause.
+         * @return the original instance of {@link StrQLBuilder}.
+         */
+        public StrQLBuilder on(String str) {
+            return on(str, new Object[0]);
+        }
 
-		/**
-		 * Appends the condition to the <code>JOIN</code> clause using the <code>ON</code> operator. Returns the original {@code StrQLBuilder}.
-		 *
-		 * @param str
-		 *            a {@code String} with the condition of the <code>JOIN</code> clause.
-		 * @return the original instance of {@link StrQLBuilder}.
-		 */
-		public StrQLBuilder on(String str)
-		{
-			return on(str, new Object[0]);
-		}
+        /**
+         * Appends the condition to the <code>JOIN</code> clause using the <code>ON</code> operator, and the parameters associated to them. Returns the original
+         * {@code StrQLBuilder}.
+         *
+         * @param str
+         *            a {@code String} with the condition of the <code>JOIN</code> clause.
+         * @param values
+         *            parameter values of the condition
+         * @return the original instance of {@link StrQLBuilder}.
+         */
+        public StrQLBuilder on(String str, Object... values) {
+            if (StringUtils.isBlank(str)) {
+                return on();
+            }
+            str = extractParams(str, values);
+            join.sb.append(tableName).append(" on ").append(str);
+            return sql;
+        }
 
-		/**
-		 * Appends the condition to the <code>JOIN</code> clause using the <code>ON</code> operator, and the parameters associated to them. Returns the original
-		 * {@code StrQLBuilder}.
-		 *
-		 * @param str
-		 *            a {@code String} with the condition of the <code>JOIN</code> clause.
-		 * @param values
-		 *            parameter values of the condition
-		 * @return the original instance of {@link StrQLBuilder}.
-		 */
+        /**
+         * Returns the original {@link StrQLBuilder}, ignoring the <code>WITH</code> clause.
+         *
+         * @return the original instance of {@link StrQLBuilder}.
+         */
+        public StrQLBuilder with() {
+            join.sb.append(tableName);
+            return sql;
+        }
 
-		public StrQLBuilder on(String str, Object... values)
-		{
-			if (StringUtils.isBlank(str))
-			{
-				return on();
-			}
-			str = extractParams(str, values);
-			join.sb.append(tableName).append(" on ").append(str);
-			return sql;
-		}
+        /**
+         * Appends the condition to the <code>JOIN</code> clause using the <code>WITH</code> operator. Returns the original {@code StrQLBuilder}.
+         *
+         * @param str
+         *            a {@code String} with the condition of the <code>JOIN</code> clause.
+         * @return the original instance of {@link StrQLBuilder}.
+         */
+        public StrQLBuilder with(String str) {
+            return with(str, new Object[0]);
+        }
 
-		/**
-		 * Returns the original {@link StrQLBuilder}, ignoring the <code>WITH</code> clause.
-		 * 
-		 * @return the original instance of {@link StrQLBuilder}.
-		 */
-		public StrQLBuilder with()
-		{
-			join.sb.append(tableName);
-			return sql;
-		}
+        /**
+         * Appends the condition to the <code>JOIN</code> clause using the <code>WITH</code> operator, and the parameters associated to them. Returns the original
+         * {@code StrQLBuilder}.
+         *
+         * @param str
+         *            a {@code String} with the condition of the <code>JOIN</code> clause.
+         * @param values
+         *            parameter values of the condition
+         * @return the original instance of {@link StrQLBuilder}.
+         */
+        public StrQLBuilder with(String str, Object... values) {
+            if (StringUtils.isBlank(str)) {
+                return with();
+            }
+            str = extractParams(str, values);
+            join.sb.append(tableName).append(" with ").append(str);
+            return sql;
+        }
 
-		/**
-		 * Appends the condition to the <code>JOIN</code> clause using the <code>WITH</code> operator. Returns the original {@code StrQLBuilder}.
-		 *
-		 * @param str
-		 *            a {@code String} with the condition of the <code>JOIN</code> clause.
-		 * @return the original instance of {@link StrQLBuilder}.
-		 */
-		public StrQLBuilder with(String str)
-		{
-			return with(str, new Object[0]);
-		}
-
-		/**
-		 * Appends the condition to the <code>JOIN</code> clause using the <code>WITH</code> operator, and the parameters associated to them. Returns the original
-		 * {@code StrQLBuilder}.
-		 *
-		 * @param str
-		 *            a {@code String} with the condition of the <code>JOIN</code> clause.
-		 * @param values
-		 *            parameter values of the condition
-		 * @return the original instance of {@link StrQLBuilder}.
-		 */
-		public StrQLBuilder with(String str, Object... values)
-		{
-			if (StringUtils.isBlank(str))
-			{
-				return with();
-			}
-			str = extractParams(str, values);
-			join.sb.append(tableName).append(" with ").append(str);
-			return sql;
-		}
-
-		/**
-		 * Appends an alias to the table/entity. Invoke this method only if you did not specify an alias previously.
-		 * 
-		 * @param alias
-		 *            a {@code String} with the alias of the table/entity name.
-		 * @return a reference to this object.
-		 */
-		public JoinOn as(String alias)
-		{
-			tableName.append(" as ").append(alias);
-			return this;
-		}
-	}
+        /**
+         * Appends an alias to the table/entity. Invoke this method only if you did not specify an alias previously.
+         *
+         * @param alias
+         *            a {@code String} with the alias of the table/entity name.
+         * @return a reference to this object.
+         */
+        public JoinOn as(String alias) {
+            tableName.append(" as ").append(alias);
+            return this;
+        }
+    }
 }

@@ -19,91 +19,90 @@ public class PersonDTO {
     private PersonDTO parent;
 
     public Long getIdPerson() {
-	return idPerson;
+        return idPerson;
     }
 
     public void setIdPerson(Long idPerson) {
-	this.idPerson = idPerson;
+        this.idPerson = idPerson;
     }
 
     public String getName() {
-	return name;
+        return name;
     }
 
     public void setName(String name) {
-	this.name = name;
+        this.name = name;
     }
 
     public String getSurname() {
-	return surname;
+        return surname;
     }
 
     public void setSurname(String surname) {
-	this.surname = surname;
+        this.surname = surname;
     }
 
     public Integer getAge() {
-	return age;
+        return age;
     }
 
     public void setAge(Integer age) {
-	this.age = age;
+        this.age = age;
     }
 
     public Float getHeight() {
-	return height;
+        return height;
     }
 
     public void setHeight(Float height) {
-	this.height = height;
+        this.height = height;
     }
 
     public Calendar getBirthday() {
-	return birthday;
+        return birthday;
     }
 
     public void setBirthday(Calendar birthday) {
-	this.birthday = birthday;
+        this.birthday = birthday;
     }
 
     public Date getCreationDate() {
-	return creationDate;
+        return creationDate;
     }
 
     public void setCreationDate(Date creationDate) {
-	this.creationDate = creationDate;
+        this.creationDate = creationDate;
     }
 
     public Enabled getEnabled() {
-	return enabled;
+        return enabled;
     }
 
     public void setEnabled(Enabled enabled) {
-	this.enabled = enabled;
+        this.enabled = enabled;
     }
 
     public boolean getAlive() {
-	return alive;
+        return alive;
     }
 
     public void setAlive(boolean alive) {
-	this.alive = alive;
+        this.alive = alive;
     }
 
     public String getReallyLongPropertyToTestLongAliases() {
-	return reallyLongPropertyToTestLongAliases;
+        return reallyLongPropertyToTestLongAliases;
     }
 
     public void setReallyLongPropertyToTestLongAliases(String reallyLongPropertyToTestLongAliases) {
-	this.reallyLongPropertyToTestLongAliases = reallyLongPropertyToTestLongAliases;
+        this.reallyLongPropertyToTestLongAliases = reallyLongPropertyToTestLongAliases;
     }
 
     public PersonDTO getParent() {
-	return parent;
+        return parent;
     }
 
     public void setParent(PersonDTO parent) {
-	this.parent = parent;
+        this.parent = parent;
     }
-
 }

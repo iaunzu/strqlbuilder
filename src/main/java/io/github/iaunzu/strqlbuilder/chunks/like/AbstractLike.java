@@ -7,22 +7,21 @@ public abstract class AbstractLike implements Like {
     private String value;
 
     public AbstractLike(String alias, String paramName, String value) {
-	this.alias = alias;
-	this.pattern = paramName;
-	this.value = value;
+        this.alias = alias;
+        this.pattern = paramName;
+        this.value = value;
     }
 
     public String getAlias() {
-	return alias;
+        return alias;
     }
 
     public String getPattern() {
-	return pattern;
+        return pattern;
     }
 
     @Override
     public String getValue() {
-	return value;
+        return value;
     }
-
 }

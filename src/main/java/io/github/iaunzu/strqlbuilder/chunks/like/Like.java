@@ -5,5 +5,4 @@ public interface Like {
     String getStatement();
 
     String getValue();
-
 }
