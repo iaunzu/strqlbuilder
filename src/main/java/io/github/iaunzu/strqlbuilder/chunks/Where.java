@@ -1,10 +1,10 @@
 package io.github.iaunzu.strqlbuilder.chunks;
 
-import io.github.iaunzu.strqlbuilder.StrQLBuilder;
+import io.github.iaunzu.strqlbuilder.QueryBuilder;
 
-public class Where extends Chunk {
+public class Where<Q extends QueryBuilder<Q>> extends Chunk<Q> {
 
-    public Where(StrQLBuilder sql) {
+    public Where(Q sql) {
         super(sql);
     }
 

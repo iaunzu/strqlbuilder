@@ -10,7 +10,7 @@ public class StrQLBuilderToSQLTest {
 
     @Test
     public void shouldResolveSelect() {
-        StrQLBuilder sql = StrQLBuilder.createNative()
+        NativeQueryBuilder sql = SQLBuilder.createNative()
                 .select("t.id as id")
                 .select(":long as number", 1L)
                 .select(":int as int", 1)
@@ -22,7 +22,7 @@ public class StrQLBuilderToSQLTest {
 
     @Test
     public void shouldResolveIN() {
-        StrQLBuilder sql = StrQLBuilder.createNative()
+        NativeQueryBuilder sql = SQLBuilder.createNative()
                 .select("t.id as id")
                 .from("table t")
                 .where("t.id in (:list)", Arrays.asList(1L, 2L))
@@ -33,7 +33,7 @@ public class StrQLBuilderToSQLTest {
 
     @Test
     public void shouldResolveMultiples() {
-        StrQLBuilder sql = StrQLBuilder.createNative()
+        NativeQueryBuilder sql = SQLBuilder.createNative()
                 .select("t.id as id")
                 .from("table t")
                 .where("t.id in (:list)", Arrays.asList(1L, 2L))
@@ -44,7 +44,7 @@ public class StrQLBuilderToSQLTest {
 
     @Test
     public void shouldResolveBooleansWithoutFromStatement() {
-        StrQLBuilder sql = StrQLBuilder.createNative().select(":true as id", true);
+        NativeQueryBuilder sql = SQLBuilder.createNative().select(":true as id", true);
 
         assertThat(sql.toSQL(), is("select true as id"));
     }

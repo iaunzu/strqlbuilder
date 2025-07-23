@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class StrQLUtils {
 
@@ -67,6 +68,20 @@ public class StrQLUtils {
             fromIndex = index + replacement.length();
             sb.replace(index, index + target.length(), replacement);
         }
+    }
+
+    public static void prependStringBuilder(StringBuilder sb, String str) {
+        if (sb.length() > 0) {
+            sb.insert(0, str);
+        } else {
+            sb.append(str);
+        }
+    }
+
+    public static void replaceAllStringBuilder(StringBuilder sb, String target, String replacement) {
+        String result = Pattern.compile(target).matcher(sb).replaceAll(replacement);
+        sb.setLength(0); // Clear the StringBuilder
+        sb.append(result); // Append the modified string
     }
 
     /**

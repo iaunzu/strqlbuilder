@@ -2,10 +2,11 @@ package io.github.iaunzu.strqlbuilder.chunks;
 
 import static io.github.iaunzu.strqlbuilder.chunks.OrderBy.Direction.ASC;
 
+import io.github.iaunzu.strqlbuilder.QueryBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderBy extends Chunk {
+public class OrderBy<Q extends QueryBuilder<Q>> extends Chunk<Q> {
 
     private Aliases selectAliases;
     private List<Direction> direction;
@@ -24,19 +25,19 @@ public class OrderBy extends Chunk {
         this.alias.add(alias);
     }
 
-    public static OrderBy by(String alias) {
-        return new OrderBy(alias);
+    public static <Q extends QueryBuilder<Q>> OrderBy<Q> by(String alias) {
+        return new OrderBy<>(alias);
     }
 
-    public static OrderBy by(String alias, Direction direction) {
-        return new OrderBy(alias, direction);
+    public static <Q extends QueryBuilder<Q>> OrderBy<Q> by(String alias, Direction direction) {
+        return new OrderBy<>(alias, direction);
     }
 
-    public OrderBy and(String alias) {
+    public OrderBy<Q> and(String alias) {
         return and(alias, ASC);
     }
 
-    public OrderBy and(String alias, Direction direction) {
+    public OrderBy<Q> and(String alias, Direction direction) {
         this.alias.add(alias);
         this.direction.add(direction);
         return this;
@@ -46,14 +47,12 @@ public class OrderBy extends Chunk {
         this.selectAliases = selectAliases;
     }
 
-    @Override
     public boolean isNotEmpty() {
         return alias != null && !alias.isEmpty();
     }
 
-    @Override
     public String build() {
-        sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < alias.size(); i++) {
             if (i != 0) {
                 sb.append(",");

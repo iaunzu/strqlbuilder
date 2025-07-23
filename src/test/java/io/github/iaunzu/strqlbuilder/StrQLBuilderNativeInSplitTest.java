@@ -50,7 +50,7 @@ public class StrQLBuilderNativeInSplitTest extends TestApplication {
         while (l-- > 0) {
             ids.add((long) l);
         }
-        StrQLBuilder sql = StrQLBuilder.createNative()
+        NativeQueryBuilder sql = SQLBuilder.createNative()
                 .select("p.id_person as idPerson")
                 .from("Person p")
                 .where("p.id_person in (:list) or p.id_person > 1", ids);

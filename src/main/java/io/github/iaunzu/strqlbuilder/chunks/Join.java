@@ -1,11 +1,11 @@
 package io.github.iaunzu.strqlbuilder.chunks;
 
-import io.github.iaunzu.strqlbuilder.StrQLBuilder;
+import io.github.iaunzu.strqlbuilder.QueryBuilder;
 import org.apache.commons.lang3.StringUtils;
 
-public class Join extends Chunk {
+public class Join<Q extends QueryBuilder<Q>> extends Chunk<Q> {
 
-    public Join(StrQLBuilder sql) {
+    public Join(Q sql) {
         super(sql);
     }
 
@@ -41,24 +41,24 @@ public class Join extends Chunk {
     }
 
     public class JoinOn {
-        private StrQLBuilder sql;
+        private Q sql;
 
-        private Join join;
+        private Join<Q> join;
 
         private StringBuilder tableName;
 
-        public JoinOn(StrQLBuilder sql, Join join, String tableName) {
+        public JoinOn(Q sql, Join<Q> join, String tableName) {
             this.sql = sql;
             this.join = join;
             this.tableName = new StringBuilder(tableName);
         }
 
         /**
-         * Returns the original {@link StrQLBuilder}, ignoring the <code>ON</code> clause.
+         * Returns the original {@link SQLBuilder}, ignoring the <code>ON</code> clause.
          *
-         * @return the original instance of {@link StrQLBuilder}.
+         * @return the original instance of {@link SQLBuilder}.
          */
-        public StrQLBuilder on() {
+        public Q on() {
             join.sb.append(tableName);
             return sql;
         }
@@ -68,9 +68,9 @@ public class Join extends Chunk {
          *
          * @param str
          *            a {@code String} with the condition of the <code>JOIN</code> clause.
-         * @return the original instance of {@link StrQLBuilder}.
+         * @return the original instance of {@link SQLBuilder}.
          */
-        public StrQLBuilder on(String str) {
+        public Q on(String str) {
             return on(str, new Object[0]);
         }
 
@@ -82,9 +82,9 @@ public class Join extends Chunk {
          *            a {@code String} with the condition of the <code>JOIN</code> clause.
          * @param values
          *            parameter values of the condition
-         * @return the original instance of {@link StrQLBuilder}.
+         * @return the original instance of {@link SQLBuilder}.
          */
-        public StrQLBuilder on(String str, Object... values) {
+        public Q on(String str, Object... values) {
             if (StringUtils.isBlank(str)) {
                 return on();
             }
@@ -94,11 +94,11 @@ public class Join extends Chunk {
         }
 
         /**
-         * Returns the original {@link StrQLBuilder}, ignoring the <code>WITH</code> clause.
+         * Returns the original {@link SQLBuilder}, ignoring the <code>WITH</code> clause.
          *
-         * @return the original instance of {@link StrQLBuilder}.
+         * @return the original instance of {@link SQLBuilder}.
          */
-        public StrQLBuilder with() {
+        public Q with() {
             join.sb.append(tableName);
             return sql;
         }
@@ -108,9 +108,9 @@ public class Join extends Chunk {
          *
          * @param str
          *            a {@code String} with the condition of the <code>JOIN</code> clause.
-         * @return the original instance of {@link StrQLBuilder}.
+         * @return the original instance of {@link SQLBuilder}.
          */
-        public StrQLBuilder with(String str) {
+        public Q with(String str) {
             return with(str, new Object[0]);
         }
 
@@ -122,9 +122,9 @@ public class Join extends Chunk {
          *            a {@code String} with the condition of the <code>JOIN</code> clause.
          * @param values
          *            parameter values of the condition
-         * @return the original instance of {@link StrQLBuilder}.
+         * @return the original instance of {@link SQLBuilder}.
          */
-        public StrQLBuilder with(String str, Object... values) {
+        public Q with(String str, Object... values) {
             if (StringUtils.isBlank(str)) {
                 return with();
             }

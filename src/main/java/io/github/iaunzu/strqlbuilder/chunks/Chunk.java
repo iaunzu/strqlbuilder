@@ -1,6 +1,6 @@
 package io.github.iaunzu.strqlbuilder.chunks;
 
-import io.github.iaunzu.strqlbuilder.StrQLBuilder;
+import io.github.iaunzu.strqlbuilder.QueryBuilder;
 import io.github.iaunzu.strqlbuilder.chunks.like.Like;
 import io.github.iaunzu.strqlbuilder.exceptions.ParseSqlException;
 import io.github.iaunzu.strqlbuilder.utils.ConditionValues;
@@ -12,20 +12,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 
-public abstract class Chunk {
+public abstract class Chunk<Q extends QueryBuilder<Q>> {
 
-    protected StrQLBuilder sql;
+    protected Q sql;
 
     protected StringBuilder sb;
 
     private List<Parameter<?>> params;
-    public List<Parameter<StrQLBuilder>> sqls;
+    public List<Parameter<Q>> sqls;
 
-    public Chunk(StrQLBuilder sql) {
+    public Chunk(Q sql) {
         this.sql = sql;
         sb = new StringBuilder();
         params = new ArrayList<Parameter<?>>();
-        sqls = new ArrayList<Parameter<StrQLBuilder>>();
+        sqls = new ArrayList<>();
     }
 
     protected String extractParams(String str, Object... values) {
@@ -48,8 +48,8 @@ public abstract class Chunk {
         while (m.find()) {
             String paramName = m.group(1);
             Object value = values[i++];
-            if (value instanceof StrQLBuilder) {
-                sqls.add(new Parameter<StrQLBuilder>(paramName, (StrQLBuilder) value));
+            if (value instanceof QueryBuilder) {
+                sqls.add(new Parameter<>(paramName, (Q) value));
                 continue;
             }
             if (value != null && value.getClass().isArray()) {
@@ -68,7 +68,7 @@ public abstract class Chunk {
         return params;
     }
 
-    public List<Parameter<StrQLBuilder>> getSqls() {
+    public List<Parameter<Q>> getSqls() {
         return sqls;
     }
 
@@ -78,7 +78,7 @@ public abstract class Chunk {
 
     public abstract String build();
 
-    public StrQLBuilder and(String and, Object... values) {
+    public Q and(String and, Object... values) {
         and = extractParams(and, values);
         and = trim(and);
         if (this.sb.length() != 0) {
@@ -88,7 +88,7 @@ public abstract class Chunk {
         return sql;
     }
 
-    public StrQLBuilder andlike(Like like) {
+    public Q andlike(Like like) {
         if (like.getValue() == null) return sql;
         // REGEXP_LIKE es de oracle
         // return and(" REGEXP_LIKE(" + alias + ", " + var + " )", value.replaceAll("(.)", "[[=$1=]]"));

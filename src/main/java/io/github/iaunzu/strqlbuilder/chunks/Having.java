@@ -1,6 +1,8 @@
 package io.github.iaunzu.strqlbuilder.chunks;
 
-public class Having extends Chunk {
+import io.github.iaunzu.strqlbuilder.QueryBuilder;
+
+public class Having<Q extends QueryBuilder<Q>> extends Chunk<Q> {
 
     public Having() {
         super(null);

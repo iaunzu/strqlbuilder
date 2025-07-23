@@ -1,6 +1,8 @@
 package io.github.iaunzu.strqlbuilder.chunks;
 
-public class GroupBy extends Chunk {
+import io.github.iaunzu.strqlbuilder.QueryBuilder;
+
+public class GroupBy<Q extends QueryBuilder<Q>> extends Chunk<Q> {
 
     public GroupBy() {
         super(null);

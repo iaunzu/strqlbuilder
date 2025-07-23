@@ -1,8 +1,9 @@
 package io.github.iaunzu.strqlbuilder.chunks;
 
+import io.github.iaunzu.strqlbuilder.QueryBuilder;
 import org.apache.commons.lang3.StringUtils;
 
-public class Select extends Chunk {
+public class Select<Q extends QueryBuilder<Q>> extends Chunk<Q> {
 
     private Aliases aliases;
 
@@ -11,7 +12,7 @@ public class Select extends Chunk {
         aliases = new Aliases();
     }
 
-    public Select select(String select, Object... values) {
+    public Select<Q> select(String select, Object... values) {
         select = extractParams(select, values);
         for (String str : select.split(",")) {
             if (StringUtils.isNotBlank(str)) {

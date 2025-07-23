@@ -13,18 +13,14 @@ import io.github.iaunzu.strqlbuilder.apptest.TestApplication;
 import io.github.iaunzu.strqlbuilder.apptest.domain.Person;
 import io.github.iaunzu.strqlbuilder.apptest.dto.Enabled;
 import io.github.iaunzu.strqlbuilder.apptest.dto.PersonDTO;
-import io.github.iaunzu.strqlbuilder.apptest.dto.PersonJava8DTO;
 import io.github.iaunzu.strqlbuilder.apptest.repositories.PersonRepository;
-import io.github.iaunzu.strqlbuilder.hibernate.StrTypedQuery;
+import io.github.iaunzu.strqlbuilder.chunks.OrderBy;
 import io.github.iaunzu.strqlbuilder.pagination.PagedTypedQuery;
-import io.github.iaunzu.strqlbuilder.utils.pojo.DefaultPojoFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -68,7 +64,7 @@ public class StrQLBuilderJPQLTest extends TestApplication {
 
     @Test
     public void personDTOResultTest() {
-        StrQLBuilder jpa = StrQLBuilder.createJPQL()
+        JPQLQueryBuilder jpa = SQLBuilder.createJPQL()
                 .select("p.id as idPerson")
                 .select("p.name as name")
                 .select("p.surname as \"surname\"")
@@ -87,7 +83,7 @@ public class StrQLBuilderJPQLTest extends TestApplication {
                 .and("p.name IN :pnamearray", (Object) new String[] {"Luis"})
                 .and("p.name IN :pnamelist", Arrays.asList("Luis"))
                 .and("p.name IN (:pnamelist2)", Arrays.asList("Luis"))
-                .order(by("surname", DESC).and("name"));
+                .order(OrderBy.<JPQLQueryBuilder>by("surname", DESC).and("name"));
 
         TypedQuery<PersonDTO> query = jpa.createQuery(entityManager, PersonDTO.class);
         query.setFirstResult(0);
@@ -112,7 +108,7 @@ public class StrQLBuilderJPQLTest extends TestApplication {
 
     @Test
     public void orderAliasTest() {
-        StrQLBuilder jpa = StrQLBuilder.createJPQL()
+        JPQLQueryBuilder jpa = SQLBuilder.createJPQL()
                 .select("p.name as reallyLongPropertyToTestLongAliases")
                 .from("Person p")
                 .order(by("reallyLongPropertyToTestLongAliases", DESC));
@@ -125,7 +121,7 @@ public class StrQLBuilderJPQLTest extends TestApplication {
 
     @Test
     public void orderAliasQuotedTest() {
-        StrQLBuilder jpa = StrQLBuilder.createJPQL()
+        JPQLQueryBuilder jpa = SQLBuilder.createJPQL()
                 .select("p.name as \"reallyLongPropertyToTestLongAliases\"")
                 .from("Person p")
                 .order(by("\"reallyLongPropertyToTestLongAliases\"", DESC));
@@ -138,7 +134,7 @@ public class StrQLBuilderJPQLTest extends TestApplication {
 
     @Test
     public void groupHavingTest() {
-        StrQLBuilder jpa = StrQLBuilder.createJPQL()
+        JPQLQueryBuilder jpa = SQLBuilder.createJPQL()
                 .select("p.name")
                 .from("Person p")
                 .leftjoin("p.job j")
@@ -153,7 +149,7 @@ public class StrQLBuilderJPQLTest extends TestApplication {
 
     @Test
     public void stringResultTest() {
-        StrQLBuilder jpa = StrQLBuilder.createJPQL()
+        JPQLQueryBuilder jpa = SQLBuilder.createJPQL()
                 .select("p.name")
                 .from("Person p")
                 .leftjoin("p.job")
@@ -166,7 +162,7 @@ public class StrQLBuilderJPQLTest extends TestApplication {
 
     @Test
     public void longResultTest() {
-        StrQLBuilder jpa = StrQLBuilder.createJPQL().select("p.id").from("Person p");
+        JPQLQueryBuilder jpa = SQLBuilder.createJPQL().select("p.id").from("Person p");
         TypedQuery<Long> query = jpa.createQuery(entityManager, Long.class);
         List<Long> persons = query.getResultList();
         assertThat(persons, is(not(empty())));
@@ -174,19 +170,19 @@ public class StrQLBuilderJPQLTest extends TestApplication {
 
     @Test
     public void subSelectTest() {
-        StrQLBuilder jpa = StrQLBuilder.createJPQL()
+        JPQLQueryBuilder jpa = SQLBuilder.createJPQL()
                 .select("p.id")
                 .from("Person p")
                 .where(
                         "not exists (:jpa)",
-                        StrQLBuilder.createNative()
+                        SQLBuilder.createJPQL()
                                 .select("1")
                                 .from("Job j")
                                 .where("j.id = p.id")
                                 .and("1 = :val", 1)
                                 .and(
                                         "exists (:jpa2)",
-                                        StrQLBuilder.createNative()
+                                        SQLBuilder.createJPQL()
                                                 .select("1")
                                                 .from("Person p")
                                                 .where("1 = :val2", 1)));
@@ -197,7 +193,7 @@ public class StrQLBuilderJPQLTest extends TestApplication {
 
     @Test
     public void countTest() {
-        StrQLBuilder jpa = StrQLBuilder.createJPQL().count("*").from("Person p");
+        JPQLQueryBuilder jpa = SQLBuilder.createJPQL().count("*").from("Person p");
         TypedQuery<Long> query = jpa.createQuery(entityManager, Long.class);
         Long persons = query.getSingleResult();
         assertThat(persons, is(2L));
@@ -205,7 +201,7 @@ public class StrQLBuilderJPQLTest extends TestApplication {
 
     @Test
     public void pagedTest() {
-        StrQLBuilder jpa = StrQLBuilder.createJPQL().select("p.name").from("Person p");
+        JPQLQueryBuilder jpa = SQLBuilder.createJPQL().select("p.name").from("Person p");
         Pageable pageable = PageRequest.of(0, 10);
         PagedTypedQuery<String> query = jpa.createPagedQuery(entityManager, String.class, pageable);
         Page<String> persons = query.getResultList();
@@ -217,7 +213,7 @@ public class StrQLBuilderJPQLTest extends TestApplication {
 
     @Test
     public void page0Test() {
-        StrQLBuilder jpa = StrQLBuilder.createJPQL().select("p.surname").from("Person p");
+        JPQLQueryBuilder jpa = SQLBuilder.createJPQL().select("p.surname").from("Person p");
         Pageable pageable = PageRequest.of(0, 1);
         PagedTypedQuery<String> query = jpa.createPagedQuery(entityManager, String.class, pageable);
         Page<String> persons = query.getResultList();
@@ -230,7 +226,7 @@ public class StrQLBuilderJPQLTest extends TestApplication {
 
     @Test
     public void page1Test() {
-        StrQLBuilder jpa = StrQLBuilder.createJPQL().select("p.age").from("Person p");
+        JPQLQueryBuilder jpa = SQLBuilder.createJPQL().select("p.age").from("Person p");
         Pageable pageable = PageRequest.of(1, 1);
         PagedTypedQuery<Long> query = jpa.createPagedQuery(entityManager, Long.class, pageable);
         Page<Long> ages = query.getResultList();
@@ -244,7 +240,7 @@ public class StrQLBuilderJPQLTest extends TestApplication {
     @Test
     @Disabled
     public void page1DTOTest() {
-        StrQLBuilder jpa = StrQLBuilder.createJPQL()
+        JPQLQueryBuilder jpa = SQLBuilder.createJPQL()
                 .select("p.surname")
                 .from("Person p")
                 .order(by("id_person")); // Hibernate No se checkea si existe la propiedad
@@ -256,60 +252,5 @@ public class StrQLBuilderJPQLTest extends TestApplication {
         assertThat(persons.getNumberOfElements(), is(1));
         assertThat(persons.getTotalElements(), is(2L));
         assertThat(persons.getContent().get(0).getSurname(), is("Labiano"));
-    }
-
-    @Test
-    public void customPojoFactoryTest() {
-        StrQLBuilder sql = StrQLBuilder.createNative()
-                .select("p.birthday")
-                .from("Person p")
-                .where("p.birthday is not null");
-
-        StrTypedQuery<LocalDate> query = sql.createQuery(entityManager, LocalDate.class);
-        query.setPojoFactory(new DefaultPojoFactory<LocalDate>(LocalDate.class) {
-            @Override
-            public boolean isPrimitive() {
-                return true;
-            }
-
-            @Override
-            public LocalDate parsePrimitive(Object v) {
-                if (!(v instanceof Date)) {
-                    return null;
-                }
-                Date date = (Date) v;
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(date);
-                return LocalDate.of(
-                        cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
-            }
-        });
-        List<LocalDate> values = query.getResultList();
-        assertThat(values, hasSize(1));
-        LocalDate today = LocalDate.now();
-        assertThat(values.get(0), is(today));
-    }
-
-    @Test
-    public void customPropertyEditorTest() {
-        StrQLBuilder sql = StrQLBuilder.createNative()
-                .select("p.birthday as birthDate")
-                .from("Person p")
-                .where("p.birthday is not null");
-
-        StrTypedQuery<PersonJava8DTO> query = sql.createQuery(entityManager, PersonJava8DTO.class);
-        query.addCustomPropertyEditor(LocalDate.class, (Object v) -> {
-            if (!(v instanceof Date)) {
-                return null;
-            }
-            Date date = (Date) v;
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-            return LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
-        });
-        List<PersonJava8DTO> values = query.getResultList();
-        assertThat(values, hasSize(1));
-        LocalDate today = LocalDate.now();
-        assertThat(values.get(0).getBirthDate(), is(today));
     }
 }
