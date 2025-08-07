@@ -3,6 +3,7 @@ package io.github.iaunzu.strqlbuilder;
 import io.github.iaunzu.strqlbuilder.chunks.Join;
 import io.github.iaunzu.strqlbuilder.chunks.Join.JoinOn;
 import io.github.iaunzu.strqlbuilder.chunks.OrderBy;
+import io.github.iaunzu.strqlbuilder.exceptions.ParseSqlException;
 import io.github.iaunzu.strqlbuilder.hibernate.StrTypedQuery;
 import io.github.iaunzu.strqlbuilder.pagination.PagedTypedQuery;
 import jakarta.persistence.EntityManager;
@@ -306,7 +307,7 @@ public interface QueryBuilder<T extends QueryBuilder<T>> {
      *                           if this method is invoked before invoking
      *                           {@link #join(String)} or {@link #where()}.
      */
-    T and(String and);
+    T and(String and) throws ParseSqlException;
 
     /**
      * Appends a new condition to the <code>WHERE</code> or <code>JOIN</code> clause,
@@ -326,7 +327,7 @@ public interface QueryBuilder<T extends QueryBuilder<T>> {
      *                           {@link #join(String)} or {@link #where()}.
      * @see #and(String)
      */
-    T and(String and, Object... values);
+    T and(String and, Object... values) throws ParseSqlException;
 
     /**
      * Appends a new <code>LIKE</code> operator condition to the <code>WHERE</code> or
@@ -347,7 +348,7 @@ public interface QueryBuilder<T extends QueryBuilder<T>> {
      *                           {@link #join(String)} or {@link #where()}.
      * @see #and(String)
      */
-    T andlike(String alias, String paramName, String value);
+    T andlike(String alias, String paramName, String value) throws ParseSqlException;
 
     Map<? extends String, ? extends Object> buildParametersMap();
 

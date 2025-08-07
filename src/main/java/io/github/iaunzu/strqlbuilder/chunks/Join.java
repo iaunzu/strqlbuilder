@@ -54,9 +54,9 @@ public class Join<Q extends QueryBuilder<Q>> extends Chunk<Q> {
         }
 
         /**
-         * Returns the original {@link SQLBuilder}, ignoring the <code>ON</code> clause.
+         * Returns the original {@link QueryBuilder}, ignoring the <code>ON</code> clause.
          *
-         * @return the original instance of {@link SQLBuilder}.
+         * @return the original instance of {@link QueryBuilder}.
          */
         public Q on() {
             join.sb.append(tableName);
@@ -64,11 +64,11 @@ public class Join<Q extends QueryBuilder<Q>> extends Chunk<Q> {
         }
 
         /**
-         * Appends the condition to the <code>JOIN</code> clause using the <code>ON</code> operator. Returns the original {@code StrQLBuilder}.
+         * Appends the condition to the <code>JOIN</code> clause using the <code>ON</code> operator. Returns the original {@code QueryBuilder}.
          *
          * @param str
          *            a {@code String} with the condition of the <code>JOIN</code> clause.
-         * @return the original instance of {@link SQLBuilder}.
+         * @return the original instance of {@link QueryBuilder}.
          */
         public Q on(String str) {
             return on(str, new Object[0]);
@@ -76,13 +76,13 @@ public class Join<Q extends QueryBuilder<Q>> extends Chunk<Q> {
 
         /**
          * Appends the condition to the <code>JOIN</code> clause using the <code>ON</code> operator, and the parameters associated to them. Returns the original
-         * {@code StrQLBuilder}.
+         * {@code QueryBuilder}.
          *
          * @param str
          *            a {@code String} with the condition of the <code>JOIN</code> clause.
          * @param values
          *            parameter values of the condition
-         * @return the original instance of {@link SQLBuilder}.
+         * @return the original instance of {@link QueryBuilder}.
          */
         public Q on(String str, Object... values) {
             if (StringUtils.isBlank(str)) {
@@ -94,9 +94,9 @@ public class Join<Q extends QueryBuilder<Q>> extends Chunk<Q> {
         }
 
         /**
-         * Returns the original {@link SQLBuilder}, ignoring the <code>WITH</code> clause.
+         * Returns the original {@link QueryBuilder}, ignoring the <code>WITH</code> clause.
          *
-         * @return the original instance of {@link SQLBuilder}.
+         * @return the original instance of {@link QueryBuilder}.
          */
         public Q with() {
             join.sb.append(tableName);
@@ -104,11 +104,11 @@ public class Join<Q extends QueryBuilder<Q>> extends Chunk<Q> {
         }
 
         /**
-         * Appends the condition to the <code>JOIN</code> clause using the <code>WITH</code> operator. Returns the original {@code StrQLBuilder}.
+         * Appends the condition to the <code>JOIN</code> clause using the <code>WITH</code> operator. Returns the original {@code QueryBuilder}.
          *
          * @param str
          *            a {@code String} with the condition of the <code>JOIN</code> clause.
-         * @return the original instance of {@link SQLBuilder}.
+         * @return the original instance of {@link QueryBuilder}.
          */
         public Q with(String str) {
             return with(str, new Object[0]);
@@ -116,13 +116,13 @@ public class Join<Q extends QueryBuilder<Q>> extends Chunk<Q> {
 
         /**
          * Appends the condition to the <code>JOIN</code> clause using the <code>WITH</code> operator, and the parameters associated to them. Returns the original
-         * {@code StrQLBuilder}.
+         * {@code QueryBuilder}.
          *
          * @param str
          *            a {@code String} with the condition of the <code>JOIN</code> clause.
          * @param values
          *            parameter values of the condition
-         * @return the original instance of {@link SQLBuilder}.
+         * @return the original instance of {@link QueryBuilder}.
          */
         public Q with(String str, Object... values) {
             if (StringUtils.isBlank(str)) {

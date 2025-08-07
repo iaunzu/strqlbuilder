@@ -146,7 +146,7 @@ public abstract class AbstractQueryBuilder<Q extends QueryBuilder<Q>> implements
     }
 
     @Override
-    public Q where(String str, Object... values) {
+    public Q where(String str, Object... values) throws ParseSqlException {
         where();
         if (values != null && values.length == 1 && values[0] == null) {
             return self;
@@ -190,12 +190,12 @@ public abstract class AbstractQueryBuilder<Q extends QueryBuilder<Q>> implements
     }
 
     @Override
-    public Q and(String and) {
+    public Q and(String and) throws ParseSqlException {
         return and(and, new Object[0]);
     }
 
     @Override
-    public Q and(String and, Object... values) {
+    public Q and(String and, Object... values) throws ParseSqlException {
         if (!(lastChunk instanceof Join || lastChunk instanceof Where)) {
             throw new ParseSqlException("You can only call this method after invoking join() or where() methods.");
         }
@@ -206,7 +206,7 @@ public abstract class AbstractQueryBuilder<Q extends QueryBuilder<Q>> implements
     }
 
     @Override
-    public Q andlike(String alias, String paramName, String value) {
+    public Q andlike(String alias, String paramName, String value) throws ParseSqlException {
         if (!(lastChunk instanceof Join || lastChunk instanceof Where)) {
             throw new ParseSqlException("You can only call this method after invoking join() or where() methods.");
         }
